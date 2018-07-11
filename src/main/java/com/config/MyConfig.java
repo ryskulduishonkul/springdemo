@@ -1,11 +1,14 @@
 package com.config;
 
 import com.controller.HelloController;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
+import org.apache.commons.io.IOUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.*;
 import com.service.HelloJavaService;
-import org.springframework.context.annotation.EnableAspectJAutoProxy;
+import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
+import org.springframework.core.env.Environment;
+import org.springframework.core.io.Resource;
 
 /**
  * 配置类
@@ -16,7 +19,46 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 @Configuration
 @ComponentScan("com")
 @EnableAspectJAutoProxy // 启用spring对于aspectJ的支持
+@PropertySource("classpath:test.properties") // 指定文件地址
 public class MyConfig {
+    // 普通字符串
+    @Value("i love u")
+    private String normal;
+    @Value("#{systemProperties['os.name']}")
+    private String osName;
+    @Value("#{ T(java.lang.Math).random() * 100.0 }")
+    private double randomNumber;
+    /*@Value("#{propertiesService.another}")
+    private String fromAnother;*/
+    @Value("${demo.name}")
+    private String demoName;
+    @Autowired
+    private Environment environment;
+    @Value("classpath:test.txt")
+    private Resource testFile;
+    @Value("http://www.baidu.com")
+    private Resource testUrl;
+
+    @Bean
+    public static PropertySourcesPlaceholderConfigurer placeholderConfigurer(){
+        return new PropertySourcesPlaceholderConfigurer();
+    }
+
+    public void outputResource(){
+        try {
+            System.out.println(normal);
+            System.out.println(osName);
+            System.out.println(randomNumber);
+            //System.out.println(fromAnother);
+            System.out.println(demoName);
+            System.out.println(environment.getProperty("demo.author"));
+            System.out.println(IOUtils.toString(testFile.getInputStream()));
+            System.out.println(IOUtils.toString(testUrl.getInputStream()));
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
 
     /**
       * @Author holley
