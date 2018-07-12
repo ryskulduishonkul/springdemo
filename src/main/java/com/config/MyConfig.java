@@ -21,23 +21,30 @@ import org.springframework.core.io.Resource;
 @EnableAspectJAutoProxy // 启用spring对于aspectJ的支持
 @PropertySource("classpath:test.properties") // 指定文件地址
 public class MyConfig {
-    // 普通字符串
+    // 注入普通字符串
     @Value("i love u")
     private String normal;
+    // 注入操作系统属性
     @Value("#{systemProperties['os.name']}")
     private String osName;
+    // 注入表达式结果
     @Value("#{ T(java.lang.Math).random() * 100.0 }")
     private double randomNumber;
-    /*@Value("#{propertiesService.another}")
-    private String fromAnother;*/
-    @Value("${demo.name}")
-    private String demoName;
-    @Autowired
-    private Environment environment;
+    // 注入其他bean属性
+    @Value("#{propertiesService.anthor}")
+    private String fromAnother;
+    // 注入文件资源
     @Value("classpath:test.txt")
     private Resource testFile;
+    // 注入网址资源
     @Value("http://www.baidu.com")
     private Resource testUrl;
+    // 注入配置文件（需在类名上使用@PropertySource注解指定文件地址，同时如果使用@value注入，则需要配置一个PropertySourcesPlaceholderConfigurer的Bean）
+    @Value("${demo.name}")
+    private String demoName;
+    // 注入properties除了通过@value注入外还可以通过Enviroment中获的
+    @Autowired
+    private Environment environment;
 
     @Bean
     public static PropertySourcesPlaceholderConfigurer placeholderConfigurer(){
@@ -49,7 +56,7 @@ public class MyConfig {
             System.out.println(normal);
             System.out.println(osName);
             System.out.println(randomNumber);
-            //System.out.println(fromAnother);
+            System.out.println(fromAnother);
             System.out.println(demoName);
             System.out.println(environment.getProperty("demo.author"));
             System.out.println(IOUtils.toString(testFile.getInputStream()));
