@@ -1,6 +1,7 @@
 package com.config;
 
 import com.controller.HelloController;
+import com.service.ProfileJavaBean;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -69,12 +70,12 @@ public class MyConfig {
 
     /**
       * @Author holley
-      * @Description 使用java配置bean
+      * @Description 使用java配置bean(可以通过initMethod/destroyMethod 来设置初始化和销毁的方法，该方法就写在HelloJavaService类中)
       * @Date 2018/7/11 10:40
       * @Param
       * @return
       */
-    @Bean
+    @Bean(initMethod = "initdemo",destroyMethod = "destroydemo")
     public HelloJavaService helloJavaService(){
         return new HelloJavaService();
     }
@@ -98,4 +99,14 @@ public class MyConfig {
         helloController.setHelloJavaService(helloJavaService);
         return helloController;
     }*/
+    @Bean
+    @Profile("pre")
+    public ProfileJavaBean preJavaBean(){
+        return new ProfileJavaBean("生产环境下的bean实例");
+    }
+    @Bean
+    @Profile("dev")
+    public ProfileJavaBean devJavaBean(){
+        return new ProfileJavaBean("开发环境下的bean实例");
+    }
 }
